@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services
 
                 foreach (var item in file["Rules"])
                 {
-                    Rule newRule = new Rule(item);
+                    Rule newRule = Rule.CreateNew(item);
 
                     await this.CreateAsync(newRule);
                 }
@@ -214,7 +214,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services
             var item = JsonConvert.SerializeObject(rule);
             var result = await this.storage.CreateAsync(STORAGE_COLLECTION, item);
 
-            Rule newRule = new Rule(JToken.Parse(result.Data));
+            Rule newRule = Rule.CreateNew(JToken.Parse(result.Data));
             newRule.ETag = result.ETag;
             newRule.Id = result.Key;
 
@@ -232,7 +232,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services
                 item,
                 rule.ETag);
 
-            Rule updatedRule = new Rule(JToken.Parse(result.Data));
+            Rule updatedRule = Rule.CreateNew(JToken.Parse(result.Data));
 
             updatedRule.ETag = result.ETag;
             updatedRule.Id = result.Key;

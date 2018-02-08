@@ -10,6 +10,8 @@ using Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using ILogger = Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services.Diagnostics.ILogger;
 
 namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService
@@ -28,6 +30,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddIniFile("appsettings.ini", optional: false, reloadOnChange: true);
+
             this.Configuration = builder.Build();
         }
 
@@ -40,7 +43,25 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService
             services.AddCors();
 
             // Add controllers as services so they'll be resolved.
-            services.AddMvc().AddControllersAsServices();
+            // Also, add JSON serialization settings
+            services.AddMvc(options =>
+                    {
+                        options.RespectBrowserAcceptHeader = true; // false by default
+                    }
+                )
+                .AddControllersAsServices();
+                //.AddJsonOptions(options =>
+                //    {
+                //        options.SerializerSettings.ContractResolver = new DefaultContractResolver
+                //        {
+                //            NamingStrategy = new CamelCaseNamingStrategy()
+                //        };
+                //        options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                //        //TODO: Should actually create a date formatter for our specific date format instead of setting these date based properties
+                //        options.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
+                //        options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+                //    }
+                //);
 
             // Prepare DI container
             this.ApplicationContainer = DependencyResolution.Setup(services);
