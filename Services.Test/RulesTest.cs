@@ -64,7 +64,12 @@ namespace Services.Test
         {
             var sampleConditions = new List<Condition>
             {
-                new Condition("sample_conddition","Equals","1")
+                new Condition()
+                {
+                    Field = "sample_conddition",
+                    Operator ="Equals",
+                    Value ="1"
+                }
             };
 
             var sampleRules = new List<Rule>

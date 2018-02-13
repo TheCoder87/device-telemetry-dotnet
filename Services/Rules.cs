@@ -76,7 +76,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services
 
                 foreach (var item in file["Rules"])
                 {
-                    Rule newRule = Rule.CreateNew(item);
+                    Rule newRule = JsonConvert.DeserializeObject<Rule>(item.ToString());
 
                     await this.CreateAsync(newRule);
                 }
@@ -211,10 +211,14 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services
 
         public async Task<Rule> CreateAsync(Rule rule)
         {
+            // Ensure dates are correct
+            rule.DateCreated = DateTimeOffset.UtcNow.ToString(DATE_FORMAT);
+            rule.DateModified = rule.DateCreated;
+
             var item = JsonConvert.SerializeObject(rule);
             var result = await this.storage.CreateAsync(STORAGE_COLLECTION, item);
 
-            Rule newRule = Rule.CreateNew(JToken.Parse(result.Data));
+            Rule newRule = JsonConvert.DeserializeObject<Rule>(result.Data);
             newRule.ETag = result.ETag;
             newRule.Id = result.Key;
 
@@ -223,8 +227,13 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services
 
         public async Task<Rule> UpdateAsync(Rule rule)
         {
+            // Ensure dates are correct
+            // Get the existing rule so we keep the created date correct
+            var savedRule = await GetAsync(rule.Id);
+            rule.DateCreated = savedRule.DateCreated;
             rule.DateModified = DateTimeOffset.UtcNow.ToString(DATE_FORMAT);
 
+            // Save the updated rule
             var item = JsonConvert.SerializeObject(rule);
             var result = await this.storage.UpdateAsync(
                 STORAGE_COLLECTION,
@@ -232,7 +241,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services
                 item,
                 rule.ETag);
 
-            Rule updatedRule = Rule.CreateNew(JToken.Parse(result.Data));
+            Rule updatedRule = JsonConvert.DeserializeObject<Rule>(result.Data);
 
             updatedRule.ETag = result.ETag;
             updatedRule.Id = result.Key;

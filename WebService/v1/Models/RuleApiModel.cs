@@ -10,43 +10,43 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Models
 {
     public class RuleApiModel
     {
+        private const string DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:sszzz";
+
         [JsonProperty(PropertyName = "ETag")]
-        public string ETag { get; set; }
+        public string ETag { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "Id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "Name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "DateCreated")]
-        public string DateCreated { get; set; }
+        public string DateCreated { get; set; } = DateTimeOffset.UtcNow.ToString(DATE_FORMAT);
 
         [JsonProperty(PropertyName = "DateModified")]
-        public string DateModified { get; set; }
+        public string DateModified { get; set; } = DateTimeOffset.UtcNow.ToString(DATE_FORMAT);
 
         [JsonProperty(PropertyName = "Enabled")]
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = false;
 
         [JsonProperty(PropertyName = "Description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "GroupId")]
-        public string GroupId { get; set; }
+        public string GroupId { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "Severity")]
-        public string Severity { get; set; }
+        public string Severity { get; set; } = string.Empty;
 
         [JsonProperty(PropertyName = "Conditions")]
-        public IList<ConditionApiModel> Conditions { get; set; } = new List<ConditionApiModel>();
+        public List<ConditionApiModel> Conditions { get; set; } = new List<ConditionApiModel>();
 
         [JsonProperty(PropertyName = "$metadata", Order = 1000)]
         public IDictionary<string, string> Metadata => new Dictionary<string, string>
         {
             { "$type", "Rule;" + Version.NUMBER },
-            { "$uri", "/" + Version.PATH + "/rules/" + this.Id },
-            { "$created", this.DateCreated },
-            { "$modified", this.DateModified }
+            { "$uri", "/" + Version.PATH + "/rules/" + this.Id }
         };
 
         public RuleApiModel() { }
@@ -77,10 +77,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Models
             List<Condition> conditions = new List<Condition>();
             foreach (ConditionApiModel condition in this.Conditions)
             {
-                conditions.Add(new Condition(
-                    condition.Field,
-                    condition.Operator,
-                    condition.Value));
+                conditions.Add(condition.ToServiceModel());
             }
 
             return new Rule()

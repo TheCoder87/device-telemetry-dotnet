@@ -6,7 +6,6 @@ using Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services;
 using Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services.Models;
 using Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Filters;
 using Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Models;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Controllers
 {
@@ -48,8 +47,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Controllers
         [HttpPost]
         public async Task<RuleApiModel> PostAsync(
             [FromQuery] string template,
-            [FromBody] JToken rule
-            //[FromBody] RuleApiModel rule
+            [FromBody] RuleApiModel rule
             )
         {
             if (!string.IsNullOrEmpty(template))
@@ -60,8 +58,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Controllers
             }
 
             // create rule from request body
-            Rule newRule = await this.ruleService.CreateAsync(Rule.CreateNew(rule));
-            //Rule newRule = await this.ruleService.CreateAsync(rule.ToServiceModel());
+            Rule newRule = await this.ruleService.CreateAsync(rule.ToServiceModel());
 
             return new RuleApiModel(newRule);
         }
@@ -69,13 +66,11 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Controllers
         [HttpPut("{id}")]
         public async Task<RuleApiModel> PutAsync(
             [FromRoute] string id,
-            [FromBody] JToken rule
-            //[FromBody] RuleApiModel rule
+            [FromBody] RuleApiModel rule
             )
         {
-            Rule updatedRule = await this.ruleService.CreateAsync(Rule.CreateNew(rule));
-            //Rule updatedRule = await this.ruleService.UpdateAsync(rule.ToServiceModel());
-            
+            rule.Id = id;
+            Rule updatedRule = await this.ruleService.UpdateAsync(rule.ToServiceModel());
 
             return new RuleApiModel(updatedRule);
         }

@@ -2,9 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services.Exceptions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services.Models
 {
@@ -25,40 +23,6 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services.Models
         public IList<Condition> Conditions { get; set; } = new List<Condition>();
 
         public Rule() { }
-
-        public static Rule CreateNew(JToken json)
-        {
-            Rule rule = new Rule();
-
-            Rule rule2 = JsonConvert.DeserializeObject<Rule>(json.ToString());
-
-            try
-            {
-                JToken jsonRule = json;
-                JArray jsonConditions = (JArray) jsonRule["Conditions"];
-
-                rule.Name = jsonRule["Name"].ToString();
-                rule.Enabled = jsonRule["Enabled"].ToObject<bool>();
-                rule.Description = jsonRule["Description"].ToString();
-                rule.GroupId = jsonRule["GroupId"].ToString();
-                rule.Severity = jsonRule["Severity"].ToString();
-
-                List<Condition> conditions = new List<Condition>();
-                foreach (var condition in jsonConditions)
-                {
-                    conditions.Add(new Condition(
-                        condition["Field"].ToString(),
-                        condition["Operator"].ToString(),
-                        condition["Value"].ToString()));
-                }
-                rule.Conditions = conditions;
-            }
-            catch (Exception e)
-            {
-                throw new InvalidInputException("Invalid input for rule", e);
-            }
-            return rule;
-        }
 
         public int CompareTo(Rule other)
         {
