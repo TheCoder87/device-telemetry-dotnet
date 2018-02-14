@@ -69,6 +69,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Controllers
             [FromBody] RuleApiModel rule
             )
         {
+            //Ensure the id on the model matches the route
             rule.Id = id;
             Rule updatedRule = await this.ruleService.UpdateAsync(rule.ToServiceModel());
 
