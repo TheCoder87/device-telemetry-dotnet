@@ -119,30 +119,26 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.Services
         {
             var data = await this.storage.GetAllAsync(STORAGE_COLLECTION);
             var ruleList = new List<Rule>();
-
-            if (data != null)
+            foreach (var item in data.Items)
             {
-                foreach (var item in data.Items)
+                try
                 {
-                    try
-                    {
-                        var rule = JsonConvert.DeserializeObject<Rule>(item.Data);
-                        rule.ETag = item.ETag;
-                        rule.Id = item.Key;
+                    var rule = JsonConvert.DeserializeObject<Rule>(item.Data);
+                    rule.ETag = item.ETag;
+                    rule.Id = item.Key;
 
-                        if (string.IsNullOrEmpty(groupId) ||
-                            rule.GroupId.Equals(groupId, StringComparison.OrdinalIgnoreCase))
-                        {
-                            ruleList.Add(rule);
-                        }
-                    }
-                    catch (Exception e)
+                    if (string.IsNullOrEmpty(groupId) ||
+                        rule.GroupId.Equals(groupId, StringComparison.OrdinalIgnoreCase))
                     {
-                        this.log.Debug("Could not parse result from Key Value Storage",
-                            () => new { e });
-                        throw new InvalidDataException(
-                            "Could not parse result from Key Value Storage", e);
+                        ruleList.Add(rule);
                     }
+                }
+                catch (Exception e)
+                {
+                    this.log.Debug("Could not parse result from Key Value Storage",
+                        () => new { e });
+                    throw new InvalidDataException(
+                        "Could not parse result from Key Value Storage", e);
                 }
             }
 
