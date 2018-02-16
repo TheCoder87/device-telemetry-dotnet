@@ -48,8 +48,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Controllers
         [HttpPost]
         public async Task<RuleApiModel> PostAsync(
             [FromQuery] string template,
-            [FromBody] RuleApiModel rule
-            )
+            [FromBody] RuleApiModel rule)
         {
             if (!string.IsNullOrEmpty(template))
             {
@@ -71,8 +70,7 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService.v1.Controllers
         [HttpPut("{id}")]
         public async Task<RuleApiModel> PutAsync(
             [FromRoute] string id,
-            [FromBody] RuleApiModel rule
-            )
+            [FromBody] RuleApiModel rule)
         {
             if (rule == null)
             {
