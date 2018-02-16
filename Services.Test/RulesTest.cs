@@ -67,8 +67,8 @@ namespace Services.Test
                 new Condition()
                 {
                     Field = "sample_conddition",
-                    Operator ="Equals",
-                    Value ="1"
+                    Operator = "Equals",
+                    Value = "1"
                 }
             };
 
@@ -87,7 +87,7 @@ namespace Services.Test
                 {
                     Name = "Sample 2",
                     Enabled = true,
-                    Description =   "Sample description 2",
+                    Description = "Sample description 2",
                     GroupId =  "Prototyping devices",
                     Severity =  "warning",
                     Conditions =  sampleConditions
