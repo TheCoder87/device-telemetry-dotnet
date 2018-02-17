@@ -28,7 +28,6 @@ namespace Microsoft.Azure.IoTSolutions.DeviceTelemetry.WebService
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddIniFile("appsettings.ini", optional: false, reloadOnChange: true);
-
             this.Configuration = builder.Build();
         }
 
